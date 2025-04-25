@@ -24,7 +24,7 @@ from .Clf_dga_binary_nn import Clf_dga_binary_nn
 from .Clf_dga_binary_lgbm import Clf_dga_binary_lgbm
 from .Clf_dga_multiclass_lgbm import Clf_dga_multiclass_lgbm
 from .Clf_decision_nn import Clf_decision_nn
-from .Clf_decision_lgbm import Clf_decision_lgbm
+#from .Clf_decision_lgbm import Clf_decision_lgbm
 from .Clf_malware_html_lgbm import Clf_malware_html_lgbm
 
 
@@ -75,7 +75,7 @@ class Pipeline:
         self.clf_dga_binary_lgbm = Clf_dga_binary_lgbm(options)
         self.clf_dga_multiclass_lgbm = Clf_dga_multiclass_lgbm(options)
         self.clf_decision_nn = Clf_decision_nn(options)
-        self.clf_decision_lgbm = Clf_decision_lgbm(options)
+        #self.clf_decision_lgbm = Clf_decision_lgbm(options)
 
         # Suppress FutureWarning
         warnings.simplefilter(action="ignore", category=FutureWarning)
