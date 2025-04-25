@@ -8,37 +8,38 @@ from .options import PipelineOptions
 from .preprocessor import Preprocessor
 from .feature_definition import features_in_expected_order
 
-from .Clf_phishing_cnn import Clf_phishing_cnn
-from .Clf_phishing_deepnn import Clf_phishing_deepnn
+#from .Clf_phishing_cnn import Clf_phishing_cnn
+#from .Clf_phishing_deepnn import Clf_phishing_deepnn
 from .Clf_phishing_lgbm import Clf_phishing_lgbm
 from .Clf_phishing_xgboost import Clf_phishing_xgboost
 from .Clf_phishing_dns_nn import Clf_phishing_dns_nn
 from .Clf_phishing_rdap_nn import Clf_phishing_rdap_nn
-from .Clf_phishing_ip_nn import Clf_phishing_ip_nn
+#from .Clf_phishing_ip_nn import Clf_phishing_ip_nn
 from .Clf_phishing_html_lgbm import Clf_phishing_html_lgbm
 from .Clf_malware_lgbm import Clf_malware_lgbm
-from .Clf_malware_xgboost import Clf_malware_xgboost
-from .Clf_malware_deepnn import Clf_malware_deepnn
+#from .Clf_malware_xgboost import Clf_malware_xgboost
+#from .Clf_malware_deepnn import Clf_malware_deepnn
 
 from .Clf_dga_binary_nn import Clf_dga_binary_nn
 from .Clf_dga_binary_lgbm import Clf_dga_binary_lgbm
 from .Clf_dga_multiclass_lgbm import Clf_dga_multiclass_lgbm
 from .Clf_decision_nn import Clf_decision_nn
+from .Clf_decision_lgbm import Clf_decision_lgbm
 from .Clf_malware_html_lgbm import Clf_malware_html_lgbm
 
 
 classifier_ids = {
-    "Phishing CNN": 1,
+#    "Phishing CNN": 1,
     "Phishing LightGBM": 2,
     "Phishing XGBoost": 3,
-    "Phishing Deep NN": 4,
+#    "Phishing Deep NN": 4,
     "Phishing DNS-based NN": 5,
     "Phishing RDAP-based NN": 6,
-    "Phishing IP-based NN": 8,
+#    "Phishing IP-based NN": 8,
     "Phishing HTML-based LightGBM": 19,
     "Malware LightGBM": 10,
-    "Malware XGBoost": 11,
-    "Malware Deep NN": 12,
+#    "Malware XGBoost": 11,
+#    "Malware Deep NN": 12,
     "Malware HTML-based LightGBM": 20,
     "DGA Binary NN": 17,
     "DGA Binary LightGBM": 18,
@@ -56,24 +57,25 @@ class Pipeline:
             options = PipelineOptions()
 
         # Load classifiers
-        self.clf_phishing_cnn = Clf_phishing_cnn(options)
-        self.clf_phishing_deepnn = Clf_phishing_deepnn(options)
+        #self.clf_phishing_cnn = Clf_phishing_cnn(options)
+        #self.clf_phishing_deepnn = Clf_phishing_deepnn(options)
         self.clf_phishing_lgbm = Clf_phishing_lgbm(options)
         self.clf_phishing_xgboost = Clf_phishing_xgboost(options)
         self.clf_phishing_dns_nn = Clf_phishing_dns_nn(options)
         self.clf_phishing_rdap_nn = Clf_phishing_rdap_nn(options)
-        self.clf_phishing_ip_nn = Clf_phishing_ip_nn(options)
+        #self.clf_phishing_ip_nn = Clf_phishing_ip_nn(options)
         self.clf_phishing_html_lgbm = Clf_phishing_html_lgbm(options)
 
         self.clf_malware_html_lgbm = Clf_malware_html_lgbm(options)
         self.clf_malware_lgbm = Clf_malware_lgbm(options)
-        self.clf_malware_xgboost = Clf_malware_xgboost(options)
-        self.clf_malware_deepnn = Clf_malware_deepnn(options)
+        #self.clf_malware_xgboost = Clf_malware_xgboost(options)
+        #self.clf_malware_deepnn = Clf_malware_deepnn(options)
 
         self.clf_dga_binary_nn = Clf_dga_binary_nn(options)
         self.clf_dga_binary_lgbm = Clf_dga_binary_lgbm(options)
         self.clf_dga_multiclass_lgbm = Clf_dga_multiclass_lgbm(options)
         self.clf_decision_nn = Clf_decision_nn(options)
+        self.clf_decision_lgbm = Clf_decision_lgbm(options)
 
         # Suppress FutureWarning
         warnings.simplefilter(action="ignore", category=FutureWarning)
@@ -89,6 +91,7 @@ class Pipeline:
         # Initialize a DataFrame with domain names only
         stats = domain_data[["domain_name"]].copy()
 
+        
         # Iterate through each prefix to calculate the required ratios
         for prefix in prefixes:
             # Filter columns with the current prefix
@@ -115,7 +118,7 @@ class Pipeline:
                 # If no columns with the current prefix exist, set ratios to 0
                 stats[f"{prefix}available"] = 0
                 stats[f"{prefix}nonzero"] = 0
-
+        
         return stats
 
 
@@ -129,10 +132,16 @@ class Pipeline:
         # in the decision-making model (e.g., html-based classifiers)
         working_stats = domain_stats.copy()
 
+
         # Make prediction with the decision-making NN
         badness_probability = self.clf_decision_nn.classify(
-            pd.DataFrame([domain_stats])
+            pd.DataFrame([working_stats])
         )[0]
+
+        #badness_probability = self.clf_decision_lgbm.classify(
+        #    pd.DataFrame([working_stats])
+        #)[0]
+
 
         # Heuristics
         if not (
@@ -214,13 +223,13 @@ class Pipeline:
                     "probability": stats["phishing_avg"],
                     "description": phishing_desc,
                     "details": {
-                        classifier_ids["Phishing CNN"]: stats["phishing_cnn_result"],
+                        #classifier_ids["Phishing CNN"]: stats["phishing_cnn_result"],
                         classifier_ids["Phishing LightGBM"]: stats["phishing_lgbm_result"],
                         classifier_ids["Phishing XGBoost"]: stats["phishing_xgboost_result"],
-                        classifier_ids["Phishing Deep NN"]: stats["phishing_deepnn_result"],
+                        #classifier_ids["Phishing Deep NN"]: stats["phishing_deepnn_result"],
                         classifier_ids["Phishing DNS-based NN"]: stats["phishing_dns_nn_result"],
                         classifier_ids["Phishing RDAP-based NN"]: stats["phishing_rdap_nn_result"],
-                        classifier_ids["Phishing IP-based NN"]: stats["phishing_ip_nn_result"]
+                        #classifier_ids["Phishing IP-based NN"]: stats["phishing_ip_nn_result"]
                     }
                 },
                 {
@@ -228,9 +237,9 @@ class Pipeline:
                     "probability": stats["malware_avg"],
                     "description": malware_desc,
                     "details": {
-                        classifier_ids["Malware LightGBM"]: stats["malware_xgboost_result"],
-                        classifier_ids["Malware XGBoost"]: stats["malware_xgboost_result"],
-                        classifier_ids["Malware Deep NN"]: stats["malware_deepnn_result"],
+                        classifier_ids["Malware LightGBM"]: stats["malware_lgbm_result"],
+                        #classifier_ids["Malware XGBoost"]: stats["malware_xgboost_result"],
+                        #classifier_ids["Malware Deep NN"]: stats["malware_deepnn_result"],
                     }
                 },
                 {
@@ -374,19 +383,19 @@ class Pipeline:
 
         # Get individual classifiers' results
         # Phishing
-        stats["phishing_cnn_result"] = self.clf_phishing_cnn.classify(df)
+        #stats["phishing_cnn_result"] = self.clf_phishing_cnn.classify(df)
         stats["phishing_lgbm_result"] = self.clf_phishing_lgbm.classify(df)
         stats["phishing_xgboost_result"] = self.clf_phishing_xgboost.classify(df)
-        stats["phishing_deepnn_result"] = self.clf_phishing_deepnn.classify(df)
+        #stats["phishing_deepnn_result"] = self.clf_phishing_deepnn.classify(df)
         stats["phishing_dns_nn_result"] = self.clf_phishing_dns_nn.classify(df)
         stats["phishing_rdap_nn_result"] = self.clf_phishing_rdap_nn.classify(df)
-        stats["phishing_ip_nn_result"] = self.clf_phishing_ip_nn.classify(df)
+        #stats["phishing_ip_nn_result"] = self.clf_phishing_ip_nn.classify(df)
         stats["phishing_html_lgbm_result"] = self.clf_phishing_html_lgbm.classify(df)
 
         # Malware
         stats["malware_lgbm_result"] = self.clf_malware_lgbm.classify(df)
-        stats["malware_xgboost_result"] = self.clf_malware_xgboost.classify(df)
-        stats["malware_deepnn_result"] = self.clf_malware_deepnn.classify(df)
+        #stats["malware_xgboost_result"] = self.clf_malware_xgboost.classify(df)
+        #stats["malware_deepnn_result"] = self.clf_malware_deepnn.classify(df)
         stats["malware_html_lgbm_result"] = self.clf_malware_html_lgbm.classify(df)
 
         # DGA
@@ -451,6 +460,7 @@ class Pipeline:
         Returns:
             Updated dataframe with the derived statistics.
         """
+        
         phishing_keys = [key for key in stats.keys() if key.startswith("phishing_")]
         malware_keys = [key for key in stats.keys() if key.startswith("malware_")]
         dga_binary_keys = [key for key in stats.keys() if key.startswith("dga_binary_")]
@@ -464,20 +474,27 @@ class Pipeline:
         stats["total_sum"] = (
             stats["phishing_sum"] + stats["malware_sum"] + stats["dga_binary_sum"]
         )
-        total_valid_classifiers = sum(
-            stats[key].ne(-1).sum() for key in phishing_keys + malware_keys + dga_binary_keys
-        )
 
-        total_classifiers = len(phishing_keys) + len(malware_keys) + len(dga_binary_keys)
-        stats["total_avg"] = (
-            stats["total_sum"] / total_valid_classifiers if total_valid_classifiers > 0 else 0.5
-        )
+        # Calculate row-wise valid classifier counts
+        all_keys = phishing_keys + malware_keys + dga_binary_keys
+        total_valid_mask = stats[all_keys] != -1
+        stats["total_valid_classifiers"] = total_valid_mask.sum(axis=1)
+
+        # Compute total_avg safely
+        stats["total_avg"] = stats["total_sum"] / stats["total_valid_classifiers"]
+        stats["total_avg"].where(stats["total_valid_classifiers"] > 0, 0.5, inplace=True)
+
+        # Compute total_prod safely
         stats["total_prod"] = (
             stats["phishing_prod"] * stats["malware_prod"] * stats["dga_binary_prod"]
         )
-        if total_valid_classifiers == 0:  # No valid classifiers in total
-            stats["total_prod"] = 0.5 ** total_classifiers
 
+        # For rows where no valid classifiers were available, set default product
+        default_prod = 0.5 ** len(all_keys)
+        stats.loc[stats["total_valid_classifiers"] == 0, "total_prod"] = default_prod
+
+        # Clean up intermediate helper column
+        stats.drop(columns=["total_valid_classifiers"], inplace=True)
 
         return stats
 
