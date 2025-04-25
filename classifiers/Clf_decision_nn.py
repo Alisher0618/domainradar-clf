@@ -40,9 +40,19 @@ class Clf_decision_nn:
         # Load the scaler
         self.scaler = joblib.load(os.path.join(options.boundaries_dir, 'decision_nn_scaler.joblib'))
 
+        # Ensure it's a MinMaxScaler
+        from sklearn.preprocessing import MinMaxScaler
+        if not isinstance(self.scaler, MinMaxScaler):
+            raise ValueError("Loaded scaler is not a MinMaxScaler!")
+
+        # Load feature order from file
+        feature_order_file = os.path.join(options.boundaries_dir, "decision_nn_feature_order.txt")
+        with open(feature_order_file, "r") as f:
+            self.expected_features = [line.strip() for line in f.readlines()]
+
         # Get the number of features expected by the model
         # self.expected_feature_size = self.model.n_features_
-        self.expected_feature_size = 38
+        self.expected_feature_size = 33
 
     def cast_timestamp(self, df: DataFrame):
         """
@@ -69,6 +79,13 @@ class Clf_decision_nn:
         if input_data.shape[1] != self.expected_feature_size:
             raise ValueError(
                 f"The input data has {input_data.shape[1]} features, but the model expects {self.expected_feature_size} features.")
+
+    
+        # Verify and reorder features if needed
+        if set(self.expected_features) != set(input_data.columns):
+            raise ValueError("Mismatch between expected features and input features!")
+    
+        input_data = input_data[self.expected_features]  # Reorder columns
 
         # Cast timestamps
         input_data = self.cast_timestamp(input_data)
