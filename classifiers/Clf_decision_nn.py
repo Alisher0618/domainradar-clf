@@ -74,6 +74,15 @@ class Clf_decision_nn:
             input_data.drop(columns=["domain_name"], inplace=True)
         if "label" in input_data.columns:
             input_data.drop(columns=["label"], inplace=True)
+            
+            
+        input_data.drop(columns=["malware_tfidf_lgbm_result"], inplace=True)
+        input_data.drop(columns=["tfidf_malware_available"], inplace=True)
+        input_data.drop(columns=["tfidf_malware_nonzero"], inplace=True)
+
+        input_data.drop(columns=["phishing_tfidf_lgbm_result"], inplace=True)
+        input_data.drop(columns=["tfidf_phishing_available"], inplace=True)
+        input_data.drop(columns=["tfidf_phishing_nonzero"], inplace=True)
 
         # Check whether the number of features is correct
         if input_data.shape[1] != self.expected_feature_size:
